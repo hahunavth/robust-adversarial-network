@@ -98,13 +98,26 @@ class MIFGSM(object):
             self.model.train()
         return x_adv
 
+class NoneAttack(object):
+    """
+    This attack does nothing, just return the input.
+    It make trainer can be used for non-attack training (training with neutral sample).
+    """
+    def __init__(self, model, **kwargs):
+        pass
+
+    def __call__(self, x, y):
+        return x
+
 __factory = {
     'pgd': LinfPGDAttack, 
     'mifgsm': MIFGSM, 
+    'none': None,
 }
 __args_dict = {
     'pgd': ['model', 'epsilon', 'k', 'alpha', 'random_start'], 
     'mifgsm': ['model', 'epsilon', 'k', 'mu'], 
+    'none': NoneAttack,
 }
 
 def create_attack(attack_method, **kwargs):
