@@ -18,7 +18,7 @@ from torch.backends import cudnn
 
 from Logging import Logger
 from config import cfg
-from model import Model
+from model import create_model
 from evaluator import Evaluator
 from pgd_attack import LinfPGDAttack
 from utils import *
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     _, test_loader = get_data_loader(data_dir=cfg.data_dir, 
         batch_size=cfg.batch_size, test_batch_size=cfg.eval_batch_size, num_workers=4)
 
-    model = Model()
+    model = create_model(cfg.model_name)
 
     is_cuda = False
     if torch.cuda.device_count() > 1:
