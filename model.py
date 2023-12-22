@@ -107,7 +107,9 @@ def wideresnet22(**kwargs):
 
 class MnistModel(nn.Module):
     """ Construct basic MnistModel for mnist adversal attack """
-    def __init__(self, re_init=False, has_dropout=False):
+    def __init__(self, re_init=False, has_dropout=False, **kwargs):
+        if kwargs:
+            print('Warning: unused kwargs: {}'.format(kwargs))
         super(MnistModel, self).__init__()
         self.re_init = re_init
         self.has_dropout = has_dropout
