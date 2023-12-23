@@ -23,6 +23,7 @@ from model import create_model
 from trainer import Trainer
 from evaluator import Evaluator
 from pgd_attack import create_attack
+from optimizer import create_optimizer
 from utils import *
 
 
@@ -54,10 +55,11 @@ if __name__ == '__main__':
         test_batch_size=cfg.eval_batch_size, num_workers=4)
 
     model = create_model(name=cfg.model_name, num_classes=num_classes)
+    optimizer = create_optimizer(name=cfg.optimizer, model=model, lr=cfg.lr)
     # optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr, 
     #                     weight_decay=0.0005, amsgrad=False)
-    optimizer = torch.optim.SGD(model.parameters(), lr=cfg.lr, 
-                        momentum=0.9, weight_decay=0.0005)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=cfg.lr, 
+    #                     momentum=0.9, weight_decay=0.0005)
     is_cuda = False
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -74,7 +76,8 @@ if __name__ == '__main__':
                       output_freq=cfg.output_freq, print_freq=cfg.print_freq, 
                       base_lr=cfg.lr, max_epoch=cfg.max_epoch, 
                       steps=cfg.steps, rate=cfg.decay_rate)
-    evaluator = Evaluator(model=model, attack=attack, is_cuda=is_cuda, verbose=False)
+    if not cfg.no_val_stage:
+        evaluator = Evaluator(model=model, attack=attack, is_cuda=is_cuda, verbose=False)
 
     trainer.reset()
     for epoch in range(cfg.max_epoch):
@@ -85,13 +88,14 @@ if __name__ == '__main__':
             save_current = (epoch + 1) % cfg.save_freq == 0 \
                 or epoch == 0 or epoch == cfg.max_epoch - 1
         if save_current:
-            nat_acc, adv_acc = evaluator.evaluate(test_loader)
-            if summary_writer is not None:
-                summary_writer.add_scalar('nat_acc', nat_acc, epoch)
-                summary_writer.add_scalar('adv_acc', adv_acc, epoch)
-            print("epoch {:3d} evaluated".format(epoch))
-            print("natural     accuracy: {:.4f}".format(nat_acc))
-            print("adversarial accuracy: {:.4f}".format(adv_acc))
+            if not cfg.no_val_stage:
+                nat_acc, adv_acc = evaluator.evaluate(test_loader)
+                if summary_writer is not None:
+                    summary_writer.add_scalar('val/nat_acc', nat_acc, epoch)
+                    summary_writer.add_scalar('val/adv_acc', adv_acc, epoch)
+                print("epoch {:3d} evaluated".format(epoch))
+                print("natural     accuracy: {:.4f}".format(nat_acc))
+                print("adversarial accuracy: {:.4f}".format(adv_acc))
             if hasattr(model, 'module'):
                 state_dict = model.module.state_dict()
             else:

@@ -68,8 +68,9 @@ class Trainer(object):
             adv_acc = self.accuracy(adv_pred, y)
             adv_acc_meter.update(adv_acc[0].item())
             if self.summary_writer is not None:
-                self.summary_writer.add_scalar('adv_loss_iter', adv_loss_meter.val, self.iter)
-                self.summary_writer.add_scalar('adv_acc_iter', adv_acc_meter.val, self.iter)
+                self.summary_writer.add_scalar('train/learning_rate_iter', self.lr_mults[epoch] * self.base_lr, self.iter)
+                self.summary_writer.add_scalar('train/adv_loss_iter', adv_loss_meter.val, self.iter)
+                self.summary_writer.add_scalar('train/adv_acc_iter', adv_acc_meter.val, self.iter)
 
             if (i + 1) % self.output_freq == 0:
                 pred = self.model(x)
@@ -78,8 +79,8 @@ class Trainer(object):
                 acc = self.accuracy(pred, y)
                 acc_meter.update(acc[0].item())
                 if self.summary_writer is not None:
-                    self.summary_writer.add_scalar('loss_iter', loss_meter.val, self.iter)
-                    self.summary_writer.add_scalar('acc_iter', acc_meter.val, self.iter)
+                    self.summary_writer.add_scalar('train/loss_iter', loss_meter.val, self.iter)
+                    self.summary_writer.add_scalar('train/acc_iter', acc_meter.val, self.iter)
 
             if (i + 1) % self.print_freq == 0:
                 p_str = "Epoch:[{:>3d}][{:>3d}|{:>3d}] Time:[{:.3f}/{:.3f}] " \
@@ -94,10 +95,10 @@ class Trainer(object):
             self.iter += 1
 
         if self.summary_writer is not None:
-            self.summary_writer.add_scalar('loss_epoch', loss_meter.avg, epoch)
-            self.summary_writer.add_scalar('adv_loss_epoch', adv_loss_meter.avg, epoch)
-            self.summary_writer.add_scalar('acc_epoch', acc_meter.avg, epoch)
-            self.summary_writer.add_scalar('adv_acc_epoch', adv_acc_meter.avg, epoch)
+            self.summary_writer.add_scalar('train/loss_epoch', loss_meter.avg, epoch)
+            self.summary_writer.add_scalar('train/adv_loss_epoch', adv_loss_meter.avg, epoch)
+            self.summary_writer.add_scalar('train/acc_epoch', acc_meter.avg, epoch)
+            self.summary_writer.add_scalar('train/adv_acc_epoch', adv_acc_meter.avg, epoch)
 
     @staticmethod
     def accuracy(output, target, topk=(1,)):

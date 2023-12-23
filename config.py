@@ -12,7 +12,9 @@ import argparse
 
 def parse_args():
     """ Parse input arguments """
-    parser = argparse.ArgumentParser(description='Train adversal attack network')
+    parser = argparse.ArgumentParser(
+        description='Train adversal attack network',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--exp_name',           dest='exp_name', 
                         type=str,               default='debug', 
                         help='exp name used to construct output dir')
@@ -60,6 +62,12 @@ def parse_args():
     parser.add_argument('--decay_rate',         dest='decay_rate', 
                         type=float,             default=0.1, 
                         help='decay rate to decrease learning rate')
+    parser.add_argument('--optimizer',         dest='optimizer', 
+                        type=str,               default='sgd', 
+                        help='optimizer: adam | sgd')
+    parser.add_argument('--no_val_stage',est='no_val_stage',
+                    action='store_true',
+                    help="no validation stage")
     # print and output settings
     parser.add_argument('--print_freq',         dest='print_freq', 
                         type=int,               default=10, 
