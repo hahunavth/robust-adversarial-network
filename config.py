@@ -65,9 +65,9 @@ def parse_args():
     parser.add_argument('--optimizer',         dest='optimizer', 
                         type=str,               default='sgd', 
                         help='optimizer: adam | sgd')
-    parser.add_argument('--no_val_stage',est='no_val_stage',
-                    action='store_true',
-                    help="no validation stage")
+    parser.add_argument('--no_val_stage',      dest='no_val_stage',
+                        action='store_true',
+                        help="no validation stage")
     # print and output settings
     parser.add_argument('--print_freq',         dest='print_freq', 
                         type=int,               default=10, 

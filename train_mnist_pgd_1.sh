@@ -26,6 +26,6 @@ python train.py --exp_name mnist_adv_1 \
                 --lr 0.1 \
                 --steps 80,140,160 \
                 --eval_batch_size 256 \
-                --epsilon 0.3 \ 
+                --epsilon 0.3 \
                 --k 40 \
                 --alpha 0.01

@@ -4,7 +4,7 @@ set -x
 export PYTHONUNBUFFERED="True"
 
 # cifar 10 with without adversarial training
-python train.py --exp_name cifar10_pgd_1 \
+python train.py --exp_name cifar10_neu \
                 --data_name cifar10 \
                 --data_dir data/cifar10 \
                 --model_name wide \
