@@ -66,6 +66,29 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         model = model.cuda()
         is_cuda = True
+    
+    # load ckpt
+    start_ep = 0
+    ckpts = os.listdir(snap_path)
+    if ckpts:
+        sorted(ckpts, key=lambda x: int(x.replace(".pth", "").split('_')[1]))
+        last_ckpt = ckpts[-1]
+        ckpt = torch.load(os.path.join(snap_path, last_ckpt), 
+                #    map_location="cpu"
+                )
+        if 'state_dict' in ckpt:
+            model.load_state_dict(ckpt['state_dict'])
+        else:
+            print("Warn: found ckpt file but cannot load model!")
+        if 'optimizer' in ckpt:
+            optimizer.load_state_dict(ckpt['optimizer'])
+        else:
+            print("Warn: found ckpt file but cannot load optimizer!")
+        if 'epoch' in ckpt:
+            start_ep = 0
+        else:
+            print("Warn: found ckpt file but cannot load epoch!")
+
 
     attack = create_attack(attack_method=cfg.attack_method.lower(), model=model, 
                            epsilon=cfg.epsilon, k=cfg.k, alpha=cfg.alpha, 
@@ -80,7 +103,7 @@ if __name__ == '__main__':
         evaluator = Evaluator(model=model, attack=attack, is_cuda=is_cuda, verbose=False)
 
     trainer.reset()
-    for epoch in range(cfg.max_epoch):
+    for epoch in range(start_ep, cfg.max_epoch):
         trainer.train(epoch, train_loader)
         if cfg.save_freq < 1:
             save_current = False
@@ -100,8 +123,13 @@ if __name__ == '__main__':
                 state_dict = model.module.state_dict()
             else:
                 state_dict = model.state_dict()
+            if hasattr(optimizer, 'module'):
+                optim_state_dict = optimizer.module.state_dict()
+            else:
+                optim_state_dict = optimizer.state_dict()
             dict_to_save = {'state_dict': state_dict, 
-                            'epoch': epoch + 1}
+                            'epoch': epoch + 1,
+                            'optimizer': optim_state_dict}
             fpath = os.path.join(snap_path, 'checkpoint_' + 
                         str(epoch + 1) + '.pth')
             torch.save(dict_to_save, fpath)
