@@ -85,10 +85,11 @@ if __name__ == '__main__':
         else:
             print("Warn: found ckpt file but cannot load optimizer!")
         if 'epoch' in ckpt:
-            start_ep = 0
+            start_ep = ckpt['epoch']
+            print("Load ckpt file from epoch {}".format(start_ep))
         else:
             print("Warn: found ckpt file but cannot load epoch!")
-
+            start_ep = 0
 
     attack = create_attack(attack_method=cfg.attack_method.lower(), model=model, 
                            epsilon=cfg.epsilon, k=cfg.k, alpha=cfg.alpha, 
