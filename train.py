@@ -85,7 +85,7 @@ if __name__ == '__main__':
         else:
             print("Warn: found ckpt file but cannot load optimizer!")
         if 'epoch' in ckpt:
-            start_ep = ckpt['epoch']
+            start_ep = ckpt['epoch'] + 1
             print("Load ckpt file from epoch {}".format(start_ep))
         else:
             print("Warn: found ckpt file but cannot load epoch!")
