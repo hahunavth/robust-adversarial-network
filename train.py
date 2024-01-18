@@ -52,7 +52,7 @@ if __name__ == '__main__':
     pprint.pprint(cfg)
     train_loader, test_loader, num_classes, img_size = get_data_loader(
         data_name=cfg.data_name, data_dir=cfg.data_dir, batch_size=cfg.batch_size, 
-        test_batch_size=cfg.eval_batch_size, num_workers=4)
+        test_batch_size=cfg.eval_batch_size, num_workers=8)
 
     model = create_model(name=cfg.model_name, num_classes=num_classes)
     optimizer = create_optimizer(name=cfg.optimizer, model=model, lr=cfg.lr)

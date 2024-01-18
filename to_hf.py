@@ -1,4 +1,6 @@
 from huggingface_hub import HfApi
+
+
 api = HfApi()
 
 REPO_ID = "hahunavth/robust-adversarial-network"
@@ -17,10 +19,3 @@ api.upload_folder(
     folder_path='./logs',
     path_in_repo="tensorboard",
 )
-
-# api.upload_file(
-#     path_or_fileobj="/path/to/local/folder/README.md",
-#     path_in_repo="README.md",
-#     repo_id="username/test-dataset",
-#     repo_type="dataset",
-# )

@@ -4,7 +4,7 @@ set -x
 export PYTHONUNBUFFERED="True"
 
 # train default
-python train.py --exp_name cifar10_adv_1 \
+python train.py --exp_name cifar10_adv_2 \
                 --data_name cifar10 \
                 --data_dir data/cifar10 \
                 --model_name wide \
